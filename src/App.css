@@ -1,0 +1,53 @@
+#root {
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.tasklist{
+  width: 60%;
+  background-color: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 60px;
+  gap: 3rem;
+}
+
+.header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo{
+  color: #242424;
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.addtask {
+  display: flex;
+  align-items: center;
+  background-color: rgb(114, 64, 255);
+  padding: 0px 30px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  box-shadow: 1px 3px 3px 1px rgb(114, 64, 255, 0.2), 0px 2px 2px 0px rgb(114, 64, 255, 0.12);
+  cursor: pointer;
+}
+
+.addtask::before {
+    content: "+";
+    font-size: 2.25rem;
+    font-weight: 100;
+    margin-right: 10px;
+}
+
+.card-list{
+  display: flex;
+  flex-direction: column;
+  gap: 20px
+}

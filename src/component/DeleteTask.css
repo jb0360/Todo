@@ -1,0 +1,47 @@
+.deleteTask {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    color: black;
+    width: 400px;
+    padding: 15px 50px 30px;
+    border-radius: 30px;
+}
+
+.deleteTask p{
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.deleteTask .buttons{
+    gap: 15px;
+}
+
+.delete {
+    margin-top: 20px;
+    margin-left: auto;
+    background-color: rgb(114, 64, 255);
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    box-shadow: 1px 3px 3px 1px rgb(114, 64, 255, 0.2), 0px 2px 2px 0px rgb(114, 64, 255, 0.12);
+    cursor: pointer;
+}
+
+.cancel {
+    margin-top: 20px;
+    margin-left: auto;
+    background-color: rgb(255, 255, 255);
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: 1px solid #b8b8b8;
+    border-radius: 10px;
+    color: #b8b8b8;
+    cursor: pointer;
+}
