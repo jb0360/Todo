@@ -1,10 +1,16 @@
-import { useState } from 'react'
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import './Card.css'
+import type { Task } from "../data/data";
 
-function Card(props: Object) {
-    const { task, priority, progress } = props.data;
+type CardProps = {
+  data: Task;
+  editTaskPopup: (data: Task) => void;
+  deleteTaskPopup: (dltId: Task['id']) => void;
+};
+
+function Card({ data, editTaskPopup, deleteTaskPopup }: CardProps) {
+    const {id, task, priority, progress } = data;
 
     return (
         <div className="card">
@@ -29,8 +35,8 @@ function Card(props: Object) {
                     <div className='progress-display'></div>
                 </div>
                 <div className='buttons'>
-                    <button><FiEdit /></button>
-                    <button style={{ color: "red" }}><RiDeleteBinLine /></button>
+                    <button onClick={()=>editTaskPopup(data)}><FiEdit /></button>
+                    <button style={{ color: "red" }} onClick={()=>deleteTaskPopup(id)}><RiDeleteBinLine /></button>
                 </div>
             </div>
         </div>

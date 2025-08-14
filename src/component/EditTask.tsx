@@ -1,33 +1,56 @@
 import { IoMdClose } from "react-icons/io";
 import "./AddTask.css"
-import { useState } from "react";
+import type { Task } from "../data/data"
+import { useState, type FormEvent } from "react";
 
-function EditTask() {
-    const [select, setSelect] = useState('High');
-    const prioritySelect = (val: String) => {
-        setSelect(val);
+type EditProps = {
+    editingTask: Task | null;
+    editTaskPopup: (data: Task | null) => void;
+    editTask: (id: Number | undefined, taskName: string, priority: Task['priority'])=>void;
+}
+
+function EditTask({editingTask, editTaskPopup, editTask}: EditProps) {
+    const [id, setId] = useState(editingTask?.id);
+    const [taskVal, setTaskVal] = useState<string | undefined>(editingTask?.task);
+    const [priority, setPriority] = useState<Task["priority"] | undefined>(editingTask?.priority);
+    const prioritySelect = (val: Task['priority']) => {
+        setPriority(val);
     }
+
+    const handleTaskData = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTaskVal(e.target.value);
+    }
+
+    const handleFormSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        if (taskVal && priority) {
+            editTask(id, taskVal, priority);
+        }
+    }
+
+    // console.log("into edit",editingTask);
+
     return (
         <div className='addTask'>
             <div className="top">
                 <p>Edit Task</p>
-                <button className="closeButton"><IoMdClose /></button>
+                <button className="closeButton" onClick={()=>editTaskPopup(editingTask)}><IoMdClose /></button>
             </div>
-            <div className="main">
+            <form className="main" onSubmit={handleFormSubmit}>
                 <div>
                     <p>Task</p>
-                    <input type="text" name="task" placeholder="Go to gym" />
+                    <input type="text" name="task" value={taskVal} onChange={handleTaskData} required/>
                 </div>
                 <div>
                     <p>Priority</p>
                     <div className="priorityButtons">
-                        <button onClick={() => prioritySelect('High')} className={select === 'High' ? 'high-selected' : 'high'}>High</button>
-                        <button onClick={() => prioritySelect('Medium')} className={select === 'Medium' ? 'medium-selected' : 'medium'}>Medium</button>
-                        <button onClick={() => prioritySelect('Low')} className={select === 'Low' ? 'low-selected' : 'low'}>Low</button>
+                        <button type="button" onClick={() => prioritySelect('High')} className={priority === 'High' ? 'high-selected' : 'high'}>High</button>
+                        <button type="button" onClick={() => prioritySelect('Medium')} className={priority === 'Medium' ? 'medium-selected' : 'medium'}>Medium</button>
+                        <button type="button" onClick={() => prioritySelect('Low')} className={priority === 'Low' ? 'low-selected' : 'low'}>Low</button>
                     </div>
                 </div>
-            </div>
-            <button className='addButton'>Edit</button>
+                <button type="submit" className='addButton'>Edit</button>
+            </form>
         </div>
     )
 }
