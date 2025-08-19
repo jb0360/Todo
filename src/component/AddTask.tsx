@@ -4,31 +4,40 @@ import { useState, type FormEvent } from "react";
 import type { Task } from "../data/data";
 
 type AddProps = {
+    taskFlag: string;
     addTaskPopup: ()=>void;
     addNewTask: (taskName: string, priority: Task["priority"]) =>void;
+    editingTask: Task | null;
+    editTaskPopup: (data: Task | null) => void;
+    editTask: (id: number | undefined, taskName: string, priority: Task['priority'])=>void;
 }
 
-function AddTask({addTaskPopup, addNewTask}: AddProps) {
-    const [taskVal, setTaskVal] = useState('');
-    const [select, setSelect] = useState<Task["priority"]>('High');
+function AddTask({taskFlag, addTaskPopup, addNewTask, editingTask, editTaskPopup, editTask}: AddProps) {
+    const [id, setId] = useState(editingTask?.id);
+    const [taskVal, setTaskVal] = useState<string | undefined>(taskFlag==='Add' ? "" : editingTask?.task);
+    const [priority, setPriority] = useState<Task["priority"] | undefined>(taskFlag==='Add' ? "High" :editingTask?.priority);
     function prioritySelect(val: Task['priority']){
-        setSelect(val);
+        setPriority(val);
     }
-
+    
     function handleTaskData(e: React.ChangeEvent<HTMLInputElement>) {
         setTaskVal(e.target.value);
     }
 
     function handleFormSubmit(e: FormEvent) {
         e.preventDefault();
-        addNewTask(taskVal, select);
+
+        if (taskVal?.trim() && priority) {
+            console.log(taskVal.trim(), taskVal.length, taskFlag);
+            taskFlag==='Add' ? addNewTask(taskVal, priority) : editTask(id, taskVal, priority);
+        }
     }
 
     return (
         <div className='addTask'>
             <div className="top">
-                <p>Add Task</p>
-                <button className="closeButton" onClick={addTaskPopup}><IoMdClose /></button>
+                <p>{taskFlag==='Add' ? "Add Task" : "Edit Task"}</p>
+                <button className="closeButton" onClick={taskFlag==='Add' ? addTaskPopup : ()=>editTaskPopup(editingTask)}><IoMdClose /></button>
             </div>
             <form className="main" onSubmit={handleFormSubmit}>
                 <div>
@@ -38,12 +47,12 @@ function AddTask({addTaskPopup, addNewTask}: AddProps) {
                 <div>
                     <p>Priority</p>
                     <div className="priorityButtons">
-                        <button type="button" onClick={() => prioritySelect('High')} className={select === 'High' ? 'high-selected' : 'high'}>High</button>
-                        <button type="button" onClick={() => prioritySelect('Medium')} className={select === 'Medium' ? 'medium-selected' : 'medium'}>Medium</button>
-                        <button type="button" onClick={() => prioritySelect('Low')} className={select === 'Low' ? 'low-selected' : 'low'}>Low</button>
+                        <button type="button" onClick={() => prioritySelect('High')} className={priority === 'High' ? 'high-selected' : 'high'}>High</button>
+                        <button type="button" onClick={() => prioritySelect('Medium')} className={priority === 'Medium' ? 'medium-selected' : 'medium'}>Medium</button>
+                        <button type="button" onClick={() => prioritySelect('Low')} className={priority === 'Low' ? 'low-selected' : 'low'}>Low</button>
                     </div>
                 </div>
-                <button type="submit" className='addButton'>Add</button>
+                <button type="submit" className='addButton'>{taskFlag==='Add' ? "Add" : "Edit"}</button>
             </form>
         </div>
     )

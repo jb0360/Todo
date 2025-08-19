@@ -3,7 +3,6 @@ import './App.css'
 import AddTask from './component/AddTask'
 import Card from './component/Card'
 import DeleteTask from './component/DeleteTask'
-import EditTask from './component/EditTask'
 import tasksData from './data/data'
 import type { Task } from './data/data'
 
@@ -12,19 +11,20 @@ function App() {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
   const [isDeleteTaskOpen, setIsDeleteTaskOpen] = useState(false);
+  const [taskFlag, setTaskFlag] = useState<string>('');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deleteTaskId, setDeleteTaskId] = useState<number | null>(null);
 
   const addTaskPopup = () =>{
+    setTaskFlag('Add');
     setIsAddTaskOpen(prev => !prev);
   }
-
+  
   const editTaskPopup = (data: Task | null) =>{
+    setTaskFlag('Edit');
     setEditingTask(data);    
     setIsEditTaskOpen(prev => !prev);
-  }
-  // console.log(editingTask);
-  
+  }  
 
   const deleteTaskPopup = (dltId: Task['id']) =>{
     setDeleteTaskId(dltId);
@@ -41,21 +41,20 @@ function App() {
 
     setTasks(prev => [...prev, newTask])
     setIsAddTaskOpen(false);
-    // console.log("Final-Tasks:",tasks);
   }
 
-  const editTask = (id: Number,taskName: string, priority: Task['priority'])=>{
-    console.log("id:",id,"taskName", taskName, 'priority:', priority); 
-    setTasks(prev => prev.map(task => task.id !== id ? task : {
-      ...task,
-      task: taskName,
-      priority,
-    }))
+  const editTask = (id: number | undefined, taskName: string, priority: Task['priority'])=>{
+    if (id && taskName && priority) {
+      setTasks(prev => prev.map(task => task.id !== id ? task : {
+        ...task,
+        task: taskName,
+        priority,
+      }))
+    }
     setIsEditTaskOpen(false);
   }
 
   const deleteTask = (dlt: Boolean)=>{
-    // console.log("delete", dlt, 'id:', deleteTaskId); 
     if (dlt) {
       setTasks(prev => prev.filter(task=> task.id !== deleteTaskId))
     }
@@ -77,14 +76,10 @@ function App() {
           }
         </div>
       </div>
-      {isAddTaskOpen && (
+      {(isAddTaskOpen || isEditTaskOpen) && (
         <div className="popup-show">
-          <AddTask addTaskPopup={addTaskPopup} addNewTask={addNewTask}/>
-        </div>
-      )}
-      {isEditTaskOpen && (
-        <div className="popup-show">
-          <EditTask editingTask={editingTask} editTaskPopup={editTaskPopup} editTask={editTask} />
+          <AddTask taskFlag={taskFlag} addTaskPopup={addTaskPopup} addNewTask={addNewTask} 
+                    editingTask={editingTask} editTaskPopup={editTaskPopup} editTask={editTask}/>
         </div>
       )}
       {isDeleteTaskOpen && (
