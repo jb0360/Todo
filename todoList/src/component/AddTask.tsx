@@ -9,7 +9,7 @@ type AddProps = {
     addNewTask: (taskName: string, priority: Task["priority"]) =>void;
     editingTask: Task | null;
     editTaskPopup: (data: Task | null) => void;
-    editTask: (id: number | undefined, taskName: string, priority: Task['priority'])=>void;
+    editTask: (id: number | undefined, taskName: string, priority: Task['priority'], progress: Task['progress'] | null)=>void;
 }
 
 function AddTask({taskFlag, addTaskPopup, addNewTask, editingTask, editTaskPopup, editTask}: AddProps) {
@@ -28,8 +28,8 @@ function AddTask({taskFlag, addTaskPopup, addNewTask, editingTask, editTaskPopup
         e.preventDefault();
 
         if (taskVal?.trim() && priority) {
-            console.log(taskVal.trim(), taskVal.length, taskFlag);
-            taskFlag==='Add' ? addNewTask(taskVal, priority) : editTask(id, taskVal, priority);
+            // console.log(taskVal.trim(), taskVal.length, taskFlag);
+            taskFlag==='Add' ? addNewTask(taskVal, priority) : editTask(id, taskVal, priority, null);
         }
     }
 

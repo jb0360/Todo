@@ -39,9 +39,10 @@
 
 .progress {
     background-color: #edeff2;
-    padding: 3px 9px;
+    padding: 5px 9px;
     border-radius: 5px;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     border: none;
     color: #9c9c9c;
 }

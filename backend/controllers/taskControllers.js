@@ -32,16 +32,16 @@ const addTaskList = async (req, res) => {
 const editTaskList = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(req.params);
-        const { taskTitle, priority } = req.body;
+        const { taskTitle, priority, progress } = req.body;
 
         const task = await TaskModel.findById({_id: id});
-        console.log(id, task, taskTitle, priority);
+        // console.log(id, task, taskTitle, priority, progress);
         if(!task){
             return res.status(404).json({message: "Task not found."});
         }
         if (taskTitle) task.taskTitle = taskTitle;
         if (priority) task.priority = priority;
+        if (progress) task.progress = progress;
 
         await task.save();
         
@@ -55,8 +55,7 @@ const editTaskList = async (req, res) => {
 const deleteTaskList = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("id", id);
-        
+        // console.log("id", id);        
         
         const deletedTask = await TaskModel.findByIdAndDelete({_id: id});
         if (!deletedTask) return res.status(404).json({ error: "Task not found" });

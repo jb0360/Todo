@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require("mongoose");
 const cors = require('cors');
 const app = express();
-const PORT = 8080;
-const MONGO_URL = 'mongodb+srv://todolist:54321@todolist.onskx2a.mongodb.net/';
+require('dotenv').config();
+const PORT = process.env.PORT;
+const mongoUrl = process.env.MONGO_URL;
+const backendUrl = process.env.BACKEND_URL;
 const taskRoutes = require("./routes/taskRoutes");
 
 app.use(cors());
@@ -29,9 +31,9 @@ const connectDB = (url) => {
 // Start server
 const start = async () => {
     try {
-        await connectDB(MONGO_URL);        
+        await connectDB(mongoUrl);        
         app.listen(PORT, () => {
-        console.log(`Main Database API is running at http://localhost:${PORT}`);
+        console.log(`Main Database API is running at ${backendUrl}${PORT}`);
         });
     } catch (error) {
         console.log(error);

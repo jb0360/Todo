@@ -22,8 +22,12 @@ function App() {
       setTasks(todoData);
       // console.log("todoData: ",todoData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
+  }
+
+  const capitalize = (str: string): any => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
   const addTaskPopup = () => {
@@ -43,12 +47,9 @@ function App() {
   }
 
   const addNewTask = async (taskName: string, priority: Task['priority']) => {
-    const capitalize = (str: string): string =>
-      str.charAt(0).toUpperCase() + str.slice(1);
-
     const newTask: Task = {
       _id: Date.now(),
-      taskTitle: capitalize(taskName),
+      taskTitle: capitalize(taskName.trim()),
       priority,
       progress: 'To Do'
     };
@@ -64,34 +65,33 @@ function App() {
       const addResult = await response.json();
       // console.log("addResult: ", addResult);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     setIsAddTaskOpen(false);
     fetchTodos();
   }
 
-  const editTask = async (id: number | undefined, taskName: string, priority: Task['priority']) => {
-    if (id && taskName && priority) {
-      console.log(id, `http://localhost:8080/api/v1/tasks/${id}`);
-      
-      try {
-        const response = await fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({taskTitle: taskName, priority})
-        });
-        const editResult = await response.json();
-        console.log("editResult: ", editResult);
-      } catch (error) {
-        console.log(error);
-      }
-
-      fetchTodos();
+  const editTask = async (id: number | undefined, taskName: string | null, priority: Task['priority'] | null, progress: Task['progress'] | null) => {
+    // console.log(taskName, priority, progress);
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          taskTitle: taskName ? capitalize(taskName.trim()) : null,
+          priority: priority ? priority : null,
+          progress: progress ? progress : null
+        })
+      });
+      const editResult = await response.json();
+    } catch (error) {
+      console.error(error);
     }
 
+    fetchTodos();
     setIsEditTaskOpen(false);
   }
 
@@ -102,11 +102,11 @@ function App() {
           method: 'DELETE'
         });
         const deleteResult = await response.json();
-        console.log("deleteResult: ", deleteResult);
+        // console.log("deleteResult: ", deleteResult);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
-      
+
       fetchTodos();
     }
     setIsDeleteTaskOpen(false);
@@ -127,7 +127,7 @@ function App() {
           {
             tasks.length > 0 ?
               tasks.map((data: Task) => {
-                return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
+                return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} editTask={editTask} deleteTaskPopup={deleteTaskPopup} />
               })
               : <p className='no-task'>No Task Found</p>
           }
