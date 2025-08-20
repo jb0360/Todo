@@ -15,35 +15,64 @@ function App() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deleteTaskId, setDeleteTaskId] = useState<number | null>(null);
 
-  const addTaskPopup = () =>{
+  const fetchTodos = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/tasks');
+      const todoData = await response.json();
+
+      setTasks(todoData);
+      // console.log("todoData: ",todoData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const addTaskPopup = () => {
     setTaskFlag('Add');
     setIsAddTaskOpen(prev => !prev);
   }
-  
-  const editTaskPopup = (data: Task | null) =>{
-    setTaskFlag('Edit');
-    setEditingTask(data);    
-    setIsEditTaskOpen(prev => !prev);
-  }  
 
-  const deleteTaskPopup = (dltId: Task['_id']) =>{
+  const editTaskPopup = (data: Task | null) => {
+    setTaskFlag('Edit');
+    setEditingTask(data);
+    setIsEditTaskOpen(prev => !prev);
+  }
+
+  const deleteTaskPopup = (dltId: Task['_id']) => {
     setDeleteTaskId(dltId);
     setIsDeleteTaskOpen(prev => !prev);
   }
 
-  const addNewTask = (taskName: string, priority: Task['priority']) => {
+  const addNewTask = async (taskName: string, priority: Task['priority']) => {
+    const capitalize = (str: string): string =>
+      str.charAt(0).toUpperCase() + str.slice(1);
+
     const newTask: Task = {
       _id: Date.now(),
-      taskTitle: taskName,
+      taskTitle: capitalize(taskName),
       priority,
       progress: 'To Do'
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newTask)
+      });
+      const addResult = await response.json();
+      // console.log("addResult: ", addResult);
+    } catch (error) {
+      console.log(error);
     }
 
-    setTasks(prev => [...prev, newTask])
     setIsAddTaskOpen(false);
+    fetchTodos();
   }
 
-  const editTask = (id: number | undefined, taskName: string, priority: Task['priority'])=>{
+  const editTask = (id: number | undefined, taskName: string, priority: Task['priority']) => {
     if (id && taskName && priority) {
       setTasks(prev => prev.map(task => task._id !== id ? task : {
         ...task,
@@ -54,53 +83,43 @@ function App() {
     setIsEditTaskOpen(false);
   }
 
-  const deleteTask = (dlt: Boolean)=>{
+  const deleteTask = (dlt: Boolean) => {
     if (dlt) {
-      setTasks(prev => prev.filter(task=> task._id !== deleteTaskId))
+      setTasks(prev => prev.filter(task => task._id !== deleteTaskId))
     }
     setIsDeleteTaskOpen(false);
   }
 
   useEffect(() => {
-    const fetchTodos = async () =>{
-      try {
-        const response = await fetch('http://localhost:8080/api/v1/tasks');
-        const todoData = await response.json();
-
-        setTasks(todoData);
-        // console.log("todoData: ",todoData);
-      } catch (error) {
-        console.log(error);
-      }
-    }
     fetchTodos();
-  },[]);
-
+  }, []);
 
   return (
     <div className='container'>
-      <div className={isAddTaskOpen || isEditTaskOpen || isDeleteTaskOpen? 'tasklist blurred' : 'tasklist'}>
+      <div className={isAddTaskOpen || isEditTaskOpen || isDeleteTaskOpen ? 'tasklist blurred' : 'tasklist'}>
         <header className='header'>
           <div className='logo'>Task List</div>
           <button className='addtask' onClick={addTaskPopup}>Add Task</button>
         </header>
         <div className='card-list'>
           {
-            tasks.map((data: Task) => {
-              return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
-            })
+            tasks.length > 0 ?
+              tasks.map((data: Task) => {
+                return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
+              })
+            : <p className='no-task'>No Task Found</p>
           }
         </div>
       </div>
       {(isAddTaskOpen || isEditTaskOpen) && (
         <div className="popup-show">
-          <AddTask taskFlag={taskFlag} addTaskPopup={addTaskPopup} addNewTask={addNewTask} 
-                    editingTask={editingTask} editTaskPopup={editTaskPopup} editTask={editTask}/>
+          <AddTask taskFlag={taskFlag} addTaskPopup={addTaskPopup} addNewTask={addNewTask}
+            editingTask={editingTask} editTaskPopup={editTaskPopup} editTask={editTask} />
         </div>
       )}
       {isDeleteTaskOpen && (
         <div className="popup-show">
-          <DeleteTask deleteTask={deleteTask}/>
+          <DeleteTask deleteTask={deleteTask} />
         </div>
       )}
     </div>
