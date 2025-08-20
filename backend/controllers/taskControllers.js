@@ -31,9 +31,8 @@ const addTaskList = async (req, res) => {
 
 const editTaskList = async (req, res) => {
     try {
-        console.log(req.params);
-        
         const { id } = req.params;
+        console.log(req.params);
         const { taskTitle, priority } = req.body;
 
         const task = await TaskModel.findById({_id: id});
@@ -53,9 +52,24 @@ const editTaskList = async (req, res) => {
     }
 }
 
+const deleteTaskList = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("id", id);
+        
+        
+        const deletedTask = await TaskModel.findByIdAndDelete({_id: id});
+        if (!deletedTask) return res.status(404).json({ error: "Task not found" });
+        res.status(200).json({ message: "Task deleted successfully" });
+    } catch (error) {
+        console.error("Delete task error:", error);
+        res.status(500).json({ error: "Failed to delete task" });
+    }
+}
 
 module.exports = {
     getTaskList,
     addTaskList,
     editTaskList,
+    deleteTaskList
 }

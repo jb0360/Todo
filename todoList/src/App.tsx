@@ -95,9 +95,19 @@ function App() {
     setIsEditTaskOpen(false);
   }
 
-  const deleteTask = (dlt: Boolean) => {
+  const deleteTask = async (dlt: Boolean) => {
     if (dlt) {
-      setTasks(prev => prev.filter(task => task._id !== deleteTaskId))
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/tasks/${deleteTaskId}`, {
+          method: 'DELETE'
+        });
+        const deleteResult = await response.json();
+        console.log("deleteResult: ", deleteResult);
+      } catch (error) {
+        console.log(error);
+      }
+      
+      fetchTodos();
     }
     setIsDeleteTaskOpen(false);
   }
