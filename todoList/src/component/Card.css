@@ -47,12 +47,19 @@
     color: #9c9c9c;
 }
 
-.progress-display {
-    background-color: #edeff2;
-    color: rgb(114, 64, 255);
-    padding: 15px;
-    border: none;
-    border-radius: 50%;
+.circular-progressbar{
+    display: block;
+    margin: 0 auto;
+}
+.circle-background{
+    fill: none;
+    stroke: #e5e6e9;
+}
+.circle-progress {
+    fill: none;
+    stroke: #713fff;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .5s ease 0s;
 }
 
 .buttons {

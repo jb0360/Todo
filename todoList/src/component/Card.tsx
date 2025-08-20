@@ -47,7 +47,17 @@ function Card({ data, editTaskPopup, deleteTaskPopup, editTask }: CardProps) {
                     <button className='progress' onClick={handleProgressChange}>{proValue}</button>
                 </div>
                 <div>
-                    <div className='progress-display'></div>
+                    <svg width="24" height="24" viewBox="0 0 24 24" className="circular-progressbar">
+                        <circle className="circle-background" cx="12" cy="12" r="11" strokeWidth="2"></circle>
+                        {
+                            proValue === 'To Do' ? <circle className="circle-progress" cx="12" cy="12" r="11" strokeWidth="2" transform="rotate(-90 12 12)" 
+                                                    style={{ strokeDasharray: "69.115", strokeDashoffset: "69.115" }}></circle>
+                                : proValue === 'In progress' ? <circle className="circle-progress" cx="12" cy="12" r="11" strokeWidth="2" transform="rotate(-90 12 12)" 
+                                                                style={{ strokeDasharray: "69.115", strokeDashoffset: "34.5575" }}></circle>
+                                :   <circle className="circle-progress" cx="12" cy="12" r="11" strokeWidth="2" transform="rotate(-90 12 12)" 
+                                style={{ strokeDasharray: "69.115", strokeDashoffset: "0" }}></circle>
+                        }
+                    </svg>
                 </div>
                 <div className='buttons'>
                     <button onClick={() => editTaskPopup(data)}><FiEdit /></button>
