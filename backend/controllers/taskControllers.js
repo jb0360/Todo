@@ -1,6 +1,6 @@
 const TaskModel = require("../models/taskModel")
 
-const getTaskList = async (req, res) =>{
+const getTaskList = async (req, res) => {
     try {
         const todoData = await TaskModel.find();
         // console.log("data:", todoData);
@@ -8,28 +8,54 @@ const getTaskList = async (req, res) =>{
         res.status(200).json(todoData);
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: "Error"});
+        res.status(500).json({ message: "Error" });
     }
 }
-const addTaskList = async (req, res) =>{
+const addTaskList = async (req, res) => {
     try {
-        const {_id, taskTitle, priority, progress} = req.body;
-        const newTask = new TaskModel({id: _id, taskTitle, priority, progress});
+        const { _id, taskTitle, priority, progress } = req.body;
+        const newTask = new TaskModel({ id: _id, taskTitle, priority, progress });
         // console.log({_id, taskTitle, priority, progress});
 
         const savedTask = await newTask.save();
         //  console.log("savedTask: ", savedTask);
-         res.status(200).json({
+        res.status(200).json({
             message: "Added successfully.",
             task: savedTask
         })
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: error});
+        res.status(500).json({ message: error });
     }
 }
+
+const editTaskList = async (req, res) => {
+    try {
+        console.log(req.params);
+        
+        const { id } = req.params;
+        const { taskTitle, priority } = req.body;
+
+        const task = await TaskModel.findById({_id: id});
+        console.log(id, task, taskTitle, priority);
+        if(!task){
+            return res.status(404).json({message: "Task not found."});
+        }
+        if (taskTitle) task.taskTitle = taskTitle;
+        if (priority) task.priority = priority;
+
+        await task.save();
+        
+        res.status(200).json({message: "Task edit successfully."});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error });
+    }
+}
+
 
 module.exports = {
     getTaskList,
     addTaskList,
+    editTaskList,
 }

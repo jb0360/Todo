@@ -3,7 +3,6 @@ import './App.css'
 import AddTask from './component/AddTask'
 import Card from './component/Card'
 import DeleteTask from './component/DeleteTask'
-import tasksData from './data/data'
 import type { Task } from './data/data'
 
 function App() {
@@ -72,14 +71,27 @@ function App() {
     fetchTodos();
   }
 
-  const editTask = (id: number | undefined, taskName: string, priority: Task['priority']) => {
+  const editTask = async (id: number | undefined, taskName: string, priority: Task['priority']) => {
     if (id && taskName && priority) {
-      setTasks(prev => prev.map(task => task._id !== id ? task : {
-        ...task,
-        task: taskName,
-        priority,
-      }))
+      console.log(id, `http://localhost:8080/api/v1/tasks/${id}`);
+      
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/tasks/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({taskTitle: taskName, priority})
+        });
+        const editResult = await response.json();
+        console.log("editResult: ", editResult);
+      } catch (error) {
+        console.log(error);
+      }
+
+      fetchTodos();
     }
+
     setIsEditTaskOpen(false);
   }
 
@@ -107,7 +119,7 @@ function App() {
               tasks.map((data: Task) => {
                 return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
               })
-            : <p className='no-task'>No Task Found</p>
+              : <p className='no-task'>No Task Found</p>
           }
         </div>
       </div>
