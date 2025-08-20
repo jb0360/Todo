@@ -13,8 +13,8 @@ type AddProps = {
 }
 
 function AddTask({taskFlag, addTaskPopup, addNewTask, editingTask, editTaskPopup, editTask}: AddProps) {
-    const [id, setId] = useState(editingTask?.id);
-    const [taskVal, setTaskVal] = useState<string | undefined>(taskFlag==='Add' ? "" : editingTask?.task);
+    const [id, setId] = useState(editingTask?._id);
+    const [taskVal, setTaskVal] = useState<string | undefined>(taskFlag==='Add' ? "" : editingTask?.taskTitle);
     const [priority, setPriority] = useState<Task["priority"] | undefined>(taskFlag==='Add' ? "High" :editingTask?.priority);
     function prioritySelect(val: Task['priority']){
         setPriority(val);

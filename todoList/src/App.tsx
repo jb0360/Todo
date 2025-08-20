@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import AddTask from './component/AddTask'
 import Card from './component/Card'
@@ -7,7 +7,7 @@ import tasksData from './data/data'
 import type { Task } from './data/data'
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(tasksData);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [isEditTaskOpen, setIsEditTaskOpen] = useState(false);
   const [isDeleteTaskOpen, setIsDeleteTaskOpen] = useState(false);
@@ -26,15 +26,15 @@ function App() {
     setIsEditTaskOpen(prev => !prev);
   }  
 
-  const deleteTaskPopup = (dltId: Task['id']) =>{
+  const deleteTaskPopup = (dltId: Task['_id']) =>{
     setDeleteTaskId(dltId);
     setIsDeleteTaskOpen(prev => !prev);
   }
 
   const addNewTask = (taskName: string, priority: Task['priority']) => {
     const newTask: Task = {
-      id: Date.now(),
-      task: taskName,
+      _id: Date.now(),
+      taskTitle: taskName,
       priority,
       progress: 'To Do'
     }
@@ -45,7 +45,7 @@ function App() {
 
   const editTask = (id: number | undefined, taskName: string, priority: Task['priority'])=>{
     if (id && taskName && priority) {
-      setTasks(prev => prev.map(task => task.id !== id ? task : {
+      setTasks(prev => prev.map(task => task._id !== id ? task : {
         ...task,
         task: taskName,
         priority,
@@ -56,10 +56,26 @@ function App() {
 
   const deleteTask = (dlt: Boolean)=>{
     if (dlt) {
-      setTasks(prev => prev.filter(task=> task.id !== deleteTaskId))
+      setTasks(prev => prev.filter(task=> task._id !== deleteTaskId))
     }
     setIsDeleteTaskOpen(false);
   }
+
+  useEffect(() => {
+    const fetchTodos = async () =>{
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/tasks');
+        const todoData = await response.json();
+
+        setTasks(todoData);
+        // console.log("todoData: ",todoData);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchTodos();
+  },[]);
+
 
   return (
     <div className='container'>
@@ -71,7 +87,7 @@ function App() {
         <div className='card-list'>
           {
             tasks.map((data: Task) => {
-              return <Card key={data.id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
+              return <Card key={data?._id} data={data} editTaskPopup={editTaskPopup} deleteTaskPopup={deleteTaskPopup} />
             })
           }
         </div>

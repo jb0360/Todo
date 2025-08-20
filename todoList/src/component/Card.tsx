@@ -6,17 +6,17 @@ import type { Task } from "../data/data";
 type CardProps = {
   data: Task;
   editTaskPopup: (data: Task) => void;
-  deleteTaskPopup: (dltId: Task['id']) => void;
+  deleteTaskPopup: (dltId: Task['_id']) => void;
 };
 
 function Card({ data, editTaskPopup, deleteTaskPopup }: CardProps) {
-    const {id, task, priority, progress } = data;
+    const {_id, taskTitle, priority, progress } = data;
 
     return (
         <div className="card">
             <div className='card-left'>
                 <p>Task</p>
-                <div>{task}</div>
+                <div>{taskTitle}</div>
             </div>
             <div className='card-right'>
                 <div className='priority'>
@@ -36,7 +36,7 @@ function Card({ data, editTaskPopup, deleteTaskPopup }: CardProps) {
                 </div>
                 <div className='buttons'>
                     <button onClick={()=>editTaskPopup(data)}><FiEdit /></button>
-                    <button style={{ color: "red" }} onClick={()=>deleteTaskPopup(id)}><RiDeleteBinLine /></button>
+                    <button style={{ color: "red" }} onClick={()=>deleteTaskPopup(_id)}><RiDeleteBinLine /></button>
                 </div>
             </div>
         </div>
