@@ -42,7 +42,7 @@ function AddTask({taskFlag, addTaskPopup, addNewTask, editingTask, editTaskPopup
             <form className="main" onSubmit={handleFormSubmit}>
                 <div>
                     <p>Task</p>
-                    <input type="text" name="task" value={taskVal} onChange={handleTaskData} placeholder="send article to editor" required/>
+                    <input type="text" name="my-task-title" value={taskVal} onChange={handleTaskData} placeholder="send article to editor" autoComplete="new-title" required/>
                 </div>
                 <div>
                     <p>Priority</p>

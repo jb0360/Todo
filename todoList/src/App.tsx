@@ -13,14 +13,19 @@ function App() {
   const [taskFlag, setTaskFlag] = useState<string>('');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deleteTaskId, setDeleteTaskId] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [maxPages, setMaxPages] = useState(10);
+  let limit = 7;
+
 
   const fetchTodos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/v1/tasks');
-      const todoData = await response.json();
+      const response = await fetch(`http://localhost:8080/api/v1/tasks?page=${page}&limit=${limit}`);
+      const data = await response.json();
+      // console.log("response.json();: ", data.todoData);
 
-      setTasks(todoData);
-      // console.log("todoData: ",todoData);
+      setTasks(data.todoData);
+      setMaxPages(data.totalPages)
     } catch (error) {
       console.error(error);
     }
@@ -112,9 +117,14 @@ function App() {
     setIsDeleteTaskOpen(false);
   }
 
+  const handlePages = (val: string) => {
+    // console.log("page: ",val);
+    val === 'next' ? setPage(page + 1) : setPage(page - 1);
+  }
+
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [page]);
 
   return (
     <div className='container'>
@@ -131,6 +141,11 @@ function App() {
               })
               : <p className='no-task'>No Task Found</p>
           }
+        </div>
+        <div className="pages">
+          {page !== 1 && <button className="prev" onClick={()=>handlePages('prev')}>Prev</button>}
+          <div className="pageValue">Page: {page}</div>
+          {page !== maxPages && <button className="next" onClick={()=>handlePages('next')}>Next</button>}
         </div>
       </div>
       {(isAddTaskOpen || isEditTaskOpen) && (

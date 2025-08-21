@@ -2,10 +2,15 @@ const TaskModel = require("../models/taskModel")
 
 const getTaskList = async (req, res) => {
     try {
-        const todoData = await TaskModel.find();
-        // console.log("data:", todoData);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
 
-        res.status(200).json(todoData);
+        const results = await TaskModel.find();
+        const totalPages = Math.ceil(results.length / limit);
+
+        const todoData = await TaskModel.find().skip((page-1)*limit).limit(limit);
+        // console.log("results:", results.length, "todoData:", todoData.length);
+        res.status(200).json({todoData, totalPages});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error" });
