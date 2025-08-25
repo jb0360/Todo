@@ -22,6 +22,9 @@ const taskSchemas = new mongoose.Schema({
         required: true,
         default: 'To Do'
     },
+},
+{
+    timestamps: true
 });
 
 const TaskModel = mongoose.model("userTask", taskSchemas);

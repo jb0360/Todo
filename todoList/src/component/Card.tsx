@@ -8,7 +8,7 @@ type CardProps = {
     data: Task;
     editTaskPopup: (data: Task) => void;
     deleteTaskPopup: (dltId: Task['_id']) => void;
-    editTask: (id: number | undefined, taskName: string | null, priority: Task['priority'] | null, progress: Task['progress'] | null) => void;
+    editTask: (id: number | undefined, taskName: string, priority: Task['priority'], progress: Task['progress']) => void;
 };
 
 function Card({ data, editTaskPopup, deleteTaskPopup, editTask }: CardProps) {
@@ -24,7 +24,7 @@ function Card({ data, editTaskPopup, deleteTaskPopup, editTask }: CardProps) {
     const handleProgressChange = () => {
         const next = getNextProgress(proValue);
         setProValue(next);
-        editTask(_id, null, null, next);
+        editTask(_id, taskTitle, priority, next);
     }
 
     return (
